@@ -1,5 +1,5 @@
-public final class semaphoreBinaire extends semaphore {
-public semaphoreBinaire(int valeurInitiale){
+public final class CemaphoreBinaire extends Cemaphore {
+public CemaphoreBinaire(int valeurInitiale){
 	super((valeurInitiale != 0) ? 1:0);
 	//System.out.print(valeurInitiale);
 }

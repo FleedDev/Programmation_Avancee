@@ -1,8 +1,8 @@
-public abstract class semaphore {
+public abstract class Cemaphore {
 
     protected int valeur=0;
 
-    protected semaphore (int valeurInitiale){
+    protected Cemaphore(int valeurInitiale){
 	valeur = valeurInitiale>0 ? valeurInitiale:0;
     }
 
