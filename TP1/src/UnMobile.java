@@ -1,16 +1,13 @@
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.*;
 
-import static java.lang.Math.random;
+
 
 class UnMobile extends JPanel implements Runnable
 {
     int saLargeur, saHauteur, sonDebDessin;
     final int sonPas = 10, sonCote=40;
 	int sonTemps;
-	Button sonBouton;
 	Cemaphore cemaphoreGeneral ;
     
     UnMobile(int telleLargeur, int telleHauteur, Cemaphore parCemaphore)
