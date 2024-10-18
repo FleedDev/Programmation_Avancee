@@ -8,7 +8,7 @@ class UneFenetre extends JFrame
     int NbLigne;
     //JButton sonBouton;
 
-    public UneFenetre(int nbligne)
+    public UneFenetre(int nbligne, int nmbreCemaphore)
     {
         // TODO
         super("UnMobile");
@@ -16,19 +16,20 @@ class UneFenetre extends JFrame
         Container leConteneur = getContentPane();
         leConteneur.setLayout(new GridLayout(NbLigne,NBRECOL));
 
-        CemaphoreGenerale cemaphoreGenerale=new CemaphoreGenerale(3);
+        CemaphoreGenerale cemaphoreGenerale=new CemaphoreGenerale(nmbreCemaphore);
         for (int i = 0; i < NbLigne; i++){
             UnMobile sonMobile = new UnMobile(LARG,HAUT/nbligne,cemaphoreGenerale);
             Thread laTache = new Thread (sonMobile);
             leConteneur.add(sonMobile);
             laTache.start();
         }
+        ;
         setVisible(true);
         setSize(LARG,HAUT);
 
 
-        // parler du thread /1
-        //parler des boutons /2
+        // thread /1
+        //boutons /2
         //le blocage c'est dans le même niveau d'execution le runnable ne peut pas donc pas suspendre et resume
         //Pour chaque thred ça ressosurce dans laquelle il peint c'est un couloir,
         // Nous on dit dans la partie X de N sont ressource critique.
@@ -37,7 +38,7 @@ class UneFenetre extends JFrame
         //une section critique il faudra faire un wait dans la section critique et puis donc
         //effectuer un SémaphoreGénérale
 
-        //Il est possible qu'il est des problèmes de synchronisation
+        //Il est possible qu'il ait des problèmes de synchronisation
         //et donc que certains mobiles ne passe jamais la barrière
 
         //Problème rencomtré : on initialise les nouveaux thread dans la boucle pas dehors

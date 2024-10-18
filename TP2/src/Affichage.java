@@ -1,23 +1,29 @@
-/**
- * 
- */
-import java.io.*;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.BufferedReader;
 import java.lang.String;
 
+class Exclusion{}
 public class Affichage extends Thread{
-	String texte; 
+	String texte;
+	Exclusion exclusion = new Exclusion();
+	Cemaphore CemaphoreBinaire;
 
-	public Affichage (String txt){texte=txt;}
+	public Affichage (String txt, Cemaphore cemaphoreBinaire){
+		texte=txt;
+		CemaphoreBinaire=cemaphoreBinaire;
+	}
 	
 	public void run(){
 
-		for (int i=0; i<texte.length(); i++){
-		    System.out.print(texte.charAt(i));
-		    try {sleep(100);} catch(InterruptedException e){};
+		CemaphoreBinaire.syncWait();
+		//section critique du code
+		for (int i = 0; i < texte.length(); i++) {
+			System.out.print(texte.charAt(i));
+			try {
+				sleep(100);
+			} catch (InterruptedException e) {
+			}
+
 		}
+		CemaphoreBinaire.syncSignal();
 
 	}
 }
