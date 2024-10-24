@@ -109,9 +109,6 @@ Cela nécessitait d’ajuster les valeurs du sémaphore pour que chaque mobile s
 L’un des défis majeurs était de bien gérer les threads dans une boucle et d’identifier les moments où il fallait utiliser `wait()` et `signal()`. 
 Des erreurs de synchronisation pouvaient entraîner des situations où certains mobiles ne franchissaient jamais la zone critique. 
 
-D'accord, je vais intégrer l'explication directement dans le compte rendu et simplifier encore plus. Voici la version modifiée :
-
----
 
 ## **Compte rendu - Semaine 4 - TP n°4 - Programmation Avancée**
 
