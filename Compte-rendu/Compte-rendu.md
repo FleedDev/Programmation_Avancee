@@ -37,28 +37,109 @@ Ce diagramme de classes UML montre comment les différentes parties de notre pro
 
 5. **`TpMobile`** : C'est le point de départ du programme. La méthode `main()` crée la fenêtre et lance l'application.
 
-## **semaine 2 TP n°1 - Programmation Avancée**
+
+## **Semaine 2 - TP n°1 : Programmation Avancée**
 
 ### Objectif de la séance
 
-L'accent a été mis sur la gestion des threads, notamment avec les méthodes resume() et suspend() des threads.
+Pendant cette séance, on a travaillé sur la gestion des threads en Java, notamment avec l'utilisation de méthodes pour arrêter et reprendre les threads, comme `resume()` et `suspend()`, ainsi que l'alternative avec `wait()`.
 
 ### 1. Utilisation de `suspend()` et `resume()`
 
-Ensuite, on a essayé d'utiliser les méthodes **suspend** et **resume** pour contrôler l'exécution des threads, 
-en particulier pour stopper et reprendre le déplacement du mobile. Comme ces méthodes sont **déprécated**, ça n'a donc pas fonctionné.
-### 2. Pourquoi `wait()` marche sur `run()` mais pas sur `UneFenetre`
+Au début, on a essayé de contrôler l'exécution des threads avec les méthodes **suspend()** et **resume()** pour stopper et relancer le déplacement du mobile. 
+Mais ces méthodes sont **deprecated**, ce qui veut dire qu'elles sont plus recommandées parce qu'elles peuvent causer des problèmes, java nous empêche complètement de les utiliser et envois un message d'erreur s'il on essaye leur activation.
 
-Ce qui a bien marché, c'est quand on a utilisé les threads directement dans la méthode `run()` de la classe `UnMobile` en utilisant la methode `wait()`.
-La raison, c'est que le cycle de vie du thread, comme on le voit sur le schéma, se déroule à travers les étapes d'exécution (`run()`), de blocage (`wait()`), et de déblocage (`notify()`).
-Donc `UneFenetre` initialise le thread mais `wait()` intervient sur le Runnable 
+### 2. Pourquoi `wait()` marche dans `run()`, mais pas dans `UneFenetre`
 
+Ensuite, on a testé une autre solution en utilisant les méthodes **wait()**  pour gérer l'exécution des threads. 
+Cette fois, on a placé le code directement dans la méthode `run()` de la classe `UnMobile`, et là ça a fonctionné. 
+En fait, **`wait()` suspend le thread**, mais ça ne peut marcher que si le thread est déjà en train d'exécuter son code.
+Dans notre programme, `UneFenetre` se contente de démarrer le thread avec `start()`, mais ce n'est pas elle qui contrôle directement son exécution.
+C’est la méthode `run()` dans `UnMobile` qui gère tout le déroulement du thread, et donc c’est là qu’on peut utiliser `wait()` pour le mettre en pause.
 
+### 3. Cycle de vie d’un thread
 
-### 3. Cycle de vie du thread
-
-On voit bien que tout passe par les états **Prêt à l'exécution**, **Exécute**, et **Bloque**. Le thread passe par ces étapes en fonction des actions qu’on lui demande (comme `wait()` et `notify()`)
+Le thread passe par différents états : **Prêt à l'exécution**, **En exécution**, et **Bloqué**. Quand on appelle `wait()`, 
+le thread passe en état bloqué jusqu'à ce qu’il soit réveillé par un appel à `notify()`. C'est donc une manière plus efficace de gérer les threads que `suspend()` et `resume()`, 
+qui peuvent poser problème.
 
 <img src="https://cdn.discordapp.com/attachments/1245914491284226080/1296791586113589300/image.png?ex=671392c7&is=67124147&hm=328af3e71d26ea96e3f77bb4c92a911d61a6a317fda240fb23caba75bc3ce346&">
 
-## **semaine 3  TP n°1/2 - Programmation Avancée**
+## **Compte rendu - Semaine 3 - TP n°1/2 - Programmation Avancée**
+
+### Partie 1 : TP2 - Synchronisation avec `synchronized` et Sémaphore Binaire
+
+Cette semaine, on a travaillé sur la gestion de la **synchronisation des threads** en utilisant deux méthodes principales : d'abord avec le mot-clé `synchronized`, puis avec des **sémaphores binaires**. 
+L'objectif de cet exercice était de bien gérer l'accès à une portion critique du code pour éviter que plusieurs threads n'entrent en conflit.
+
+#### Utilisation de `synchronized` avec une Classe Vide `Exclusion`
+
+Dans un premier temps, on a utilisé le mot-clé `synchronized` pour contrôler l'accès à la section critique.
+Pour ce faire, on a créé une classe vide qu'on a appelée `Exclusion`, qui servait de verrou. Chaque thread devait obtenir ce verrou avant d'accéder à la section critique (c'est-à-dire la partie du code où il imprimait des lettres).
+La classe `Exclusion` ne contenait aucune donnée, mais elle était utile pour appliquer le `synchronized` et ainsi empêcher plusieurs threads d'exécuter cette portion de code en même temps. 
+Cela permettait d'éviter que les affichages se chevauchent, ce qui aurait donné un résultat incohérent.
+On a compris que la section critique était la partie qui affichait les lettres, et c’est cette portion qu’on a protégée avec le `synchronized`.
+
+#### Sémaphores et Sémaphores Binaires
+
+Ensuite, on a exploré une autre méthode de synchronisation : les **sémaphores**, plus particulièrement les **sémaphores binaires**. 
+Un sémaphore est un mécanisme qui permet de contrôler l'accès à une ressource partagée. Un sémaphore binaire fonctionne un peu comme un verrou, où une seule unité (ou thread) peut accéder à la ressource à la fois.
+Contrairement à `synchronized`, qui verrouille directement une section de code, les sémaphores offrent une approche plus flexible. 
+Ils peuvent être initialisés avec une valeur (0 ou 1), et ils bloquent l'accès tant que la valeur est à zéro. 
+Cela nous a permis de gérer plus précisément l’accès à la section critique.
+On a utilisé les méthodes `syncWait()` pour demander l'accès à la ressource et `syncSignal()` pour la libérer une fois qu'on a terminé. 
+Cela a permis à plusieurs threads d'afficher des lettres successivement, tout en respectant l'ordre et en évitant les interférences.
+
+### Partie 2 : Reprise du TP1 avec Sémaphores et Ressource Critique
+
+Dans cette partie, on a repris le TP1 pour intégrer la gestion des sémaphores dans le contexte de la simulation de mouvements graphiques de "mobiles".
+L’idée était assez similaire : plusieurs objets (mobiles) se déplacent sur l’interface graphique, et il fallait s’assurer que leurs mouvements ne se bloquent pas ou ne se chevauchent pas de manière incorrecte.
+Chaque mobile correspondait à un thread indépendant, et chaque thread devait accéder à une ressource partagée : l’espace graphique. On a donc identifié une portion critique dans le code, 
+où chaque mobile traversait une partie de l’écran qui devait être exclusive à lui pendant son passage, 
+un peu comme si chaque mobile empruntait un "couloir".
+Le sémaphore était utilisé pour verrouiller cet espace pendant que le mobile y était, afin qu'un autre mobile ne puisse pas y entrer en même temps.
+
+#### Problèmes de Synchronisation et Sémaphores Générales
+
+On a rencontré plusieurs problèmes de synchronisation, notamment avec les ressources multiples. 
+On avait une ressource partagée (l’espace d’affichage) qui était divisée en plusieurs sections, et chaque mobile devait traverser ces sections successivement. 
+Pour gérer cela, on a utilisé un **sémaphore général**, qui permettait de contrôler plusieurs ressources simultanément, au lieu d'un simple verrou binaire.
+L'objectif était d'assurer que plusieurs threads puissent avancer, tout en se synchronisant correctement dans les zones critiques pour éviter des blocages ou des interruptions mutuelles. 
+Cela nécessitait d’ajuster les valeurs du sémaphore pour que chaque mobile sache quand il pouvait entrer dans la zone critique et quand il devait attendre.
+L’un des défis majeurs était de bien gérer les threads dans une boucle et d’identifier les moments où il fallait utiliser `wait()` et `signal()`. 
+Des erreurs de synchronisation pouvaient entraîner des situations où certains mobiles ne franchissaient jamais la zone critique. 
+
+D'accord, je vais intégrer l'explication directement dans le compte rendu et simplifier encore plus. Voici la version modifiée :
+
+---
+
+## **Compte rendu - Semaine 4 - TP n°4 - Programmation Avancée**
+
+### **Introduction**
+
+Dans ce TP, nous avons appris à utiliser un **moniteur** pour gérer la synchronisation entre plusieurs threads en programmation concurrente. 
+Le but était de créer une boîte aux lettres (BAL) partagée, où un **Facteur** dépose des lettres et un **Destinataire** les retire.
+### **Objectif du TP**
+
+Le but du TP était de comprendre comment un moniteur fonctionne et de l'utiliser pour permettre à plusieurs threads de communiquer entre eux sans créer de conflits. 
+En gros, on devait s'assurer que le Facteur puisse déposer des lettres dans la BAL et que le Destinataire puisse les retirer, mais de façon organisée.
+
+### **Qu'est-ce qu'un moniteur ?**
+
+Un **moniteur** est un outil qui sert à **contrôler l'accès** des threads à des ressources partagées (comme des variables ou des objets). 
+Il permet à un seul thread d'accéder à la ressource à la fois, pour éviter les erreurs. 
+Par exemple, si deux threads essaient de modifier la même donnée en même temps, cela pourrait causer des résultats incorrects. Le moniteur garantit que ça n'arrive pas.
+
+### **Déroulement du TP**
+
+1. **Création de la BAL** :
+   Nous avons d'abord créé une classe `BAL` (Boîte Aux Lettres) qui contient une liste de lettres. Cette classe utilise un moniteur pour gérer l'attente entre le Facteur (qui dépose les lettres) et le Destinataire (qui les retire).
+
+2. **Utilisation du Moniteur** :
+   La classe `BAL` agit comme un moniteur. Nous avons utilisé les méthodes `synchronized`, `wait()` et `notify()` pour s'assurer que :
+    - **`deposer()`** : Le Facteur dépose une lettre et "réveille" le Destinataire pour qu'il sache qu'il y a une lettre à récupérer.
+    - **`retirer()`** : Le Destinataire attend que le Facteur dépose une lettre avant de la retirer.
+
+3. **Threads Facteur et Destinataire** :
+   Nous avons ensuite créé deux threads, un pour le Facteur qui dépose des lettres toutes les secondes, et un pour le Destinataire qui les retire de façon aléatoire. Le programme s'arrête quand le Destinataire reçoit la lettre "Q".
+

@@ -1,15 +1,16 @@
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class Facteur implements Runnable {
+class Facteur implements Runnable {
     private BAL chBAL;
-    private ArrayList<String> letter;
+    private ArrayList<String> lettres;
 
-    public Facteur(BAL chBAL) {
+    public Facteur(BAL chBAL, ArrayList<String> lettres) {
         this.chBAL = chBAL;
+        this.lettres = lettres;
     }
 
-    public void run(){
-        chBAL.deposer(letter);
+    public void run() {
+        chBAL.deposer(lettres);
     }
 }

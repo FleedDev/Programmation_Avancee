@@ -1,14 +1,15 @@
 import java.util.ArrayList;
 
-public class Destinataire implements Runnable {
+class Destinataire implements Runnable {
     private BAL chBAL;
-    private ArrayList<String> letter;
+    private ArrayList<String> lettres;
 
-    public Destinataire(BAL parBAL) {
-        this.chBAL = parBAL;
+    public Destinataire(BAL chBAL, ArrayList<String> lettres) {
+        this.chBAL = chBAL;
+        this.lettres = lettres;
     }
 
     public void run() {
-        chBAL.retirer(letter);
+        chBAL.retirer(lettres);
     }
 }
