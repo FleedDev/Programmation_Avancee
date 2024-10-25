@@ -1,33 +1,40 @@
-package TPWithoutConcurent;
-
+import javax.management.monitor.Monitor;
 import java.util.ArrayList;
 
-public class BAL extends Thread {
-    private ArrayList<String>  letter;
-    private Boolean available;
-    public BAL() {}
+class BAL {
+    private ArrayList<String> lettres;
+    private boolean disponible;
 
-    public synchronized void retirer(ArrayList<String> letter) {
-        if (!available) {
-            letter = null;
+    public BAL() {
+        lettres = new ArrayList<>();
+        disponible = false;
+    }
+
+    public synchronized void retirer(ArrayList<String> lettresDestinataire) {
+        while (!disponible) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
-        this.letter = getLetter();
+        lettresDestinataire.clear();
+        lettresDestinataire.addAll(lettres);
+        lettres.clear();
+        disponible = false;
+        notifyAll();
     }
 
-    public synchronized void deposer(ArrayList<String> letter) {
-        if (letter == null) {
-            //TPWithoutConccurent.Facteur unFacteur = new TPWithoutConccurent.Facteur();
-            //Thread laTache = new Thread(unFacteur);
-            setLetter(letter);
-            available = true;
+    public synchronized void deposer(ArrayList<String> nouvellesLettres) {
+        while (disponible) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
-    }
-
-    public ArrayList<String> getLetter() {
-        return letter;
-    }
-
-    public void setLetter(ArrayList<String> letter) {
-        this.letter = letter;
+        lettres.addAll(nouvellesLettres);
+        disponible = true;
+        notifyAll();
     }
 }
