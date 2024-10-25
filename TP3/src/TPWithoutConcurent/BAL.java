@@ -1,4 +1,5 @@
-import javax.management.monitor.Monitor;
+package TPWithoutConcurent;
+
 import java.util.ArrayList;
 
 public class BAL extends Thread {
@@ -15,7 +16,7 @@ public class BAL extends Thread {
 
     public synchronized void deposer(ArrayList<String> letter) {
         if (letter == null) {
-            //Facteur unFacteur = new Facteur();
+            //TPWithoutConccurent.Facteur unFacteur = new TPWithoutConccurent.Facteur();
             //Thread laTache = new Thread(unFacteur);
             setLetter(letter);
             available = true;

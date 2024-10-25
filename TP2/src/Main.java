@@ -21,6 +21,14 @@ public class Main {
 		TC.start();
 
 		TD.start();
+
+		//ils ne s'affichent pas dans le même dans le ordre
+		//B est le premier processus utilisé mais les autres ayant le même niveau d'importance
+		//semaphore regarde la portion de code si y'a personne permet de passer mais sinon il ne peut pas
+		//le garde dit wait, ils sont donc en attente à l'accès a la resource
+		//quand le thread arrive à la fin de la zone il envois un signal 'je libère la place' signal
+		//si un signal est prêt, l'os execute le nouveau process, puis signal et remet dans le tableau
+		//semaphore commence par wait et termine par signal
 	}
 
 }

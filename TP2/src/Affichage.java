@@ -25,5 +25,11 @@ public class Affichage extends Thread{
 		}
 		CemaphoreBinaire.syncSignal();
 
+
+		//section critique toute la boucle for
+		//j'ai deux thread indépendant j'ai besoin de les afficher
+		//mais séparément sans que les deux se mélange
+		//pour cela je vais synchronise
+
 	}
 }

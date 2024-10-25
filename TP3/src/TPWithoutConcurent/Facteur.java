@@ -1,4 +1,5 @@
-import java.lang.reflect.Array;
+package TPWithoutConcurent;
+
 import java.util.ArrayList;
 
 public class Facteur implements Runnable {
