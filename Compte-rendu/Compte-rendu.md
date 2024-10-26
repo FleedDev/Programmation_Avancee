@@ -24,6 +24,7 @@ Le fait de gérer le thread directement dans cette classe permet de mieux organi
 Cela permet aussi de synchroniser le rafraîchissement de l'interface avec l’animation du mobile, en séparant la gestion de l'affichage de celle du mouvement.
 
  <img src="https://cdn.discordapp.com/attachments/1245914491284226080/1296785980485009408/image.png?ex=67138d8e&is=67123c0e&hm=f577c0010db8de79c9069cfdf2cbc22008934742962d8dd10d472a6cf94e678d&">
+### Figure 1: Schema UML du TP1
 
 Ce diagramme de classes UML montre comment les différentes parties de notre programme interagissent pour créer le mouvement des mobiles dans une fenêtre.
 
@@ -64,6 +65,8 @@ le thread passe en état bloqué jusqu'à ce qu’il soit réveillé par un appe
 qui peuvent poser problème.
 
 <img src="https://cdn.discordapp.com/attachments/1245914491284226080/1296791586113589300/image.png?ex=671392c7&is=67124147&hm=328af3e71d26ea96e3f77bb4c92a911d61a6a317fda240fb23caba75bc3ce346&">
+
+### Figure 2: Schema du cycle de vie d'un Thread
 
 ## **Compte rendu - Semaine 3 - TP n°1/2 - Programmation Avancée**
 
@@ -110,16 +113,12 @@ L’un des défis majeurs était de bien gérer les threads dans une boucle et d
 Des erreurs de synchronisation pouvaient entraîner des situations où certains mobiles ne franchissaient jamais la zone critique. 
 
 
-## **Compte rendu - Semaine 4 - TP n°4 - Programmation Avancée**
+## **Compte rendu - Semaine 4 - TP n°3 - Programmation Avancée**
 
 ### **Introduction**
 
 Dans ce TP, nous avons appris à utiliser un **moniteur** pour gérer la synchronisation entre plusieurs threads en programmation concurrente. 
 Le but était de créer une boîte aux lettres (BAL) partagée, où un **Facteur** dépose des lettres et un **Destinataire** les retire.
-### **Objectif du TP**
-
-Le but du TP était de comprendre comment un moniteur fonctionne et de l'utiliser pour permettre à plusieurs threads de communiquer entre eux sans créer de conflits. 
-En gros, on devait s'assurer que le Facteur puisse déposer des lettres dans la BAL et que le Destinataire puisse les retirer, mais de façon organisée.
 
 ### **Qu'est-ce qu'un moniteur ?**
 
@@ -139,4 +138,52 @@ Par exemple, si deux threads essaient de modifier la même donnée en même temp
 
 3. **Threads Facteur et Destinataire** :
    Nous avons ensuite créé deux threads, un pour le Facteur qui dépose des lettres toutes les secondes, et un pour le Destinataire qui les retire de façon aléatoire. Le programme s'arrête quand le Destinataire reçoit la lettre "Q".
+
+## **Compte rendu - Semaine 5 - TP n°3 - Programmation Avancée**
+
+### **Compte rendu - Semaine 5 - TP n°3 - Programmation Avancée**
+
+### **Introduction**
+
+Cette semaine, nous avons abordé le **design pattern Producteur-Consommateur** pour gérer les échanges d’objets entre threads. L'objectif était de faire fonctionner et comprendre le code fourni sur le blog de Pomard, qui utilise l'interface **BlockingQueue** pour implémenter une file d’attente partagée.
+
+### **Code de Pomard et modifications**
+
+Nous avons utilisé le code de Pomard sur les files d’attente concurrentes comme base. Cependant, certaines initialisations manquaient pour que les classes soient fonctionnelles :
+- **Dans la classe `Boulanger`** : Nous avons ajouté l'initialisation de la `Boulangerie` pour permettre l’ajout de pains.
+- **Dans la classe `Mangeur`** : Nous avons ajouté l'initialisation de `Boulangerie` ainsi qu’une variable `rand` pour générer des intervalles aléatoires entre les consommations de pain.
+
+### **Le Design Pattern Producteur-Consommateur et `BlockingQueue`**
+
+Dans ce TP, `BlockingQueue` a permis de mettre en œuvre le pattern Producteur-Consommateur de manière très simple et efficace :
+
+1. **Producteurs (Boulangers)** : Les threads Boulangers utilisent la méthode `offer(pain, 200, TimeUnit.MILLISECONDS)`. Cela leur permet de tenter de déposer un pain, en attendant jusqu’à 200 ms si la file est pleine. Si le dépôt échoue, le Boulanger affiche un message indiquant que la file est pleine.
+   
+2. **Consommateurs (Mangeurs)** : Les threads Mangeurs utilisent la méthode `poll(200, TimeUnit.MILLISECONDS)`. Cela leur permet de retirer un pain s'il y en a, avec une attente maximale de 200 ms si la file est vide. Si aucun pain n’est disponible après ce délai, un message "j'ai faim" est affiché.
+
+`BlockingQueue` intègre les méthodes `offer()` et `poll()`, qui gèrent le blocage en fonction de la disponibilité de la file. Cela simplifie grandement la gestion des échanges entre producteurs et consommateurs et garantit un accès sécurisé aux ressources partagées.
+
+### **Déroulement du TP**
+
+1. **Mise en place de la Boulangerie** :
+   - Nous avons utilisé `ArrayBlockingQueue` (taille limitée à 20) pour stocker les pains.
+   - Les méthodes `depose()` et `achete()` utilisent respectivement `offer()` et `poll()` pour gérer les ajouts et les retraits de manière asynchrone, avec des délais d'attente.
+
+2. **Création des threads `Boulanger` et `Mangeur`** :
+   - **Boulanger** : Chaque Boulanger ajoute un pain toutes les secondes. Si la file est pleine, un message indique l’échec.
+   - **Mangeur** : Les Mangeurs consomment des pains à intervalles aléatoires (entre 0 et 1 seconde). En cas de succès, ils affichent un message "miam miam"; sinon, ils affichent "j’ai faim".
+
+3. **Simulation** :
+   - Nous avons lancé 5 threads Boulangers et 2 threads Mangeurs. Cette configuration nous a permis de tester le pattern Producteur-Consommateur, avec plusieurs Boulangers ajoutant et des Mangeurs retirant des pains sans conflits.
+
+### **Observations**
+
+Le pattern Producteur-Consommateur, en s'appuyant sur `BlockingQueue`, permet de simplifier la synchronisation des threads. Plutôt que d’utiliser explicitement des mécanismes de synchronisation comme `synchronized`, `wait()`, ou `notify()`, `BlockingQueue` gère automatiquement le blocage et la reprise des threads en fonction de l'état de la file d'attente.
+
+
+J'ai utilisé ChatGPT pour corriger des fautes et aussi pour la mise en page en Markdown des 2 premieres semaines du compte-rendu parce que je l'avais fais sur un google doc
+Je vous prie de m'excuser d'avoir fait ce commit en retard j'ai oublié de push mon compte-rendu de la semaine 5, la semaine dernière quand nous étions en I21 et je n'ai pas eu l'occasion de le faire quand je m'y suis apperçu parce que j'était absent le mercredi et le jeudi pour cause de maladie et ce vendredi je n'ai pas eu le temps d'aller le faire 
+
+
+   
 
